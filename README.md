@@ -28,11 +28,25 @@ docker run\
   dealog/postgis:latest
 ```
 
+> The database user and password is the default `docker:docker`.
+
 - Run the import script
 
 ```bash
 docker exec postgis_import ./import_verwaltungsgebiete.sh
 ```
+
+## View data
+
+To view the data visually it's recommended to use the [QGIS viewer](https://qgis.org/en/site/).
+
+When using this you need to add the PostGIS datasource.
+
+For the DEalog pilot project the [DEalog_Pilot.qgz](DEalog_Pilot.qgz) file can be loaded.
+
+It should look like this:
+
+![QGIS screenshot](qgis_screen.png "QGIS")
 
 ## License
 
