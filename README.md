@@ -6,6 +6,8 @@ The used data is obtained from [Verwaltungsgebiete 1:250 000 (Ebenen), Stand 01.
 
 ## Usage
 
+### Import data
+
 > Note: This container is used to mainly convert and view the data.
 > **DO NOT USE IN PRODUCTION**
 
@@ -24,7 +26,7 @@ docker run\
   -d\
   -p 15432:5432\
   -e POSTGRES_DBNAME=postgis\
-  -v ${PWD}/data:/app/data\
+  -v ${PWD}:/app\
   dealog/postgis:latest
 ```
 
@@ -36,7 +38,7 @@ docker run\
 docker exec postgis_import ./import_verwaltungsgebiete.sh
 ```
 
-## View data
+### View data
 
 To view the data visually it's recommended to use the [QGIS viewer](https://qgis.org/en/site/).
 
@@ -47,6 +49,17 @@ For the DEalog pilot project the [DEalog_Pilot.qgz](DEalog_Pilot.qgz) file can b
 It should look like this:
 
 ![QGIS screenshot](qgis_screen.png "QGIS")
+
+### Export data
+
+The DEalog pilot project needs only a subset of the data which can be exported
+with the following command (the argument is the AGS):
+
+```bash
+docker exec postgis_import ./export_csv_verwaltungsgebiete.sh 05911 05913 05914 05915 05916 05954 05958 05962 05966 05970 05974 05978
+```
+
+This will export given municipalities incl. supervising ones to `data/` as CSV files.
 
 ## License
 

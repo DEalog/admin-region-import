@@ -6,4 +6,5 @@ RUN apt update\
       && apt install -y postgis curl unzip
 RUN mkdir /app
 WORKDIR /app
-COPY import_verwaltungsgebiete.sh /app/import_verwaltungsgebiete.sh
+COPY import_verwaltungsgebiete.sh /app
+COPY export_csv_verwaltungsgebiete.sh /app
