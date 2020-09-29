@@ -13,6 +13,7 @@ function build_query {
     SELECT
       ags,
       '${parent_ags}' as parent_ags,
+      '${type}' as type,
       gen,
       bez,
       geom
@@ -30,6 +31,7 @@ function build_static_query {
     SELECT
       ags,
       null as parent_ags,
+      'sta' as type,
       gen,
       bez,
       geom
@@ -58,13 +60,15 @@ function export_to_csv {
 echo "localhost:5432:postgis:docker:docker" > ~/.pgpass
 chmod 600 ~/.pgpass
 
-export_to_csv "00000000" "$(build_static_query "00000000")"
+state_ags="00000000"
+export_to_csv "0" "$(build_static_query "${state_ags}")"
 
 for ags in "$@"
 do
-  export_to_csv ${ags:0:2} "$(build_query "lan" ${state_ags} ${ags:0:2})"
-  export_to_csv ${ags:0:3} "$(build_query "rbz" ${ags:0:2} ${ags:0:3})"
-  export_to_csv ${ags} "$(build_query "gem" ${ags:0:3} ${ags})"
+  export_to_csv ${state_ags} "$(build_query "lan" ${state_ags} ${ags:0:2})"
+  export_to_csv ${ags:0:2} "$(build_query "rbz" ${ags:0:2} ${ags:0:3})"
+  export_to_csv ${ags:0:3} "$(build_query "krs" ${ags:0:3} ${ags:0:3})"
+  export_to_csv ${ags} "$(build_query "gem" ${ags} ${ags})"
 done
 
 cat << EOF
