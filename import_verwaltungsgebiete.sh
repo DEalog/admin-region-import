@@ -15,7 +15,7 @@ if [ ! -f "${ARCHIVE_NAME}.zip" ]; then
 else
   echo "Archive found. Skipping download."
 fi
-unzip "${ARCHIVE_NAME}.zip"
+unzip -o "${ARCHIVE_NAME}.zip"
 
 cd "${ARCHIVE_NAME}/${SUB_FOLDER}/"
 

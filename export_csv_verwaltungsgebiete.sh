@@ -55,8 +55,14 @@ function export_to_csv {
   echo "Exported to data/${ars}.csv"
 }
 
+function ensure_data_dir {
+  mkdir -p /app/data
+}
+
 echo "localhost:5432:postgis:docker:docker" > ~/.pgpass
 chmod 600 ~/.pgpass
+
+ensure_data_dir
 
 state_ars="000000000000"
 export_to_csv "0" "$(build_static_query "${state_ars}")"
