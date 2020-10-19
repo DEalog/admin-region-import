@@ -1,26 +1,25 @@
 #!/usr/bin/env bash
 
 if [ -z "${1}" ]; then
-  echo "At least one AGS argument is mandatory."
+  echo "At least one ARS argument is mandatory."
   exit 1
 fi
 
 function build_query {
   local type=${1}
-  local parent_ags=${2}
-  local ags=${3}
+  local parent_ars=${2}
+  local ars=${3}
   local query=$(cat << EOF
     SELECT
-      ags,
-      '${parent_ags}' as parent_ags,
+      ars,
+      '${parent_ars}' as parent_ars,
       '${type}' as type,
       gen,
-      bez,
-      geom
+      bez
     FROM
       vg250_${type}
     WHERE
-      ags LIKE '${ags}%'
+      ars LIKE '${ars}%'
 EOF
   )
   echo ${query}
@@ -29,16 +28,15 @@ EOF
 function build_static_query {
   local query=$(cat << EOF
     SELECT
-      ags,
-      null as parent_ags,
+      ars,
+      null as parent_ars,
       'sta' as type,
       gen,
-      bez,
-      geom
+      bez
     FROM
       vg250_sta
     WHERE
-      ags = '${1}'
+      ars = '${1}'
     AND gf = '4'
 EOF
   )
@@ -46,29 +44,35 @@ EOF
 }
 
 function export_to_csv {
-  local ags=${1}
+  local ars=${1}
   local query=${2}
-  echo "Starting export for ${ags}"
+  echo "Starting export for ${ars}"
   psql\
     -h localhost\
     -d postgis\
     -U docker\
-    -c "Copy ($query) To '/app/data/${ags}.csv' With CSV DELIMITER ',' HEADER;"
-  echo "Exported to data/${ags}.csv"
+    -c "Copy ($query) To '/app/data/${ars}.csv' With CSV DELIMITER ',' HEADER;"
+  echo "Exported to data/${ars}.csv"
+}
+
+function ensure_data_dir {
+  mkdir -p /app/data
 }
 
 echo "localhost:5432:postgis:docker:docker" > ~/.pgpass
 chmod 600 ~/.pgpass
 
-state_ags="00000000"
-export_to_csv "0" "$(build_static_query "${state_ags}")"
+ensure_data_dir
 
-for ags in "$@"
+state_ars="000000000000"
+export_to_csv "0" "$(build_static_query "${state_ars}")"
+
+for ars in "$@"
 do
-  export_to_csv ${state_ags} "$(build_query "lan" ${state_ags} ${ags:0:2})"
-  export_to_csv ${ags:0:2} "$(build_query "rbz" ${ags:0:2} ${ags:0:3})"
-  export_to_csv ${ags:0:3} "$(build_query "krs" ${ags:0:3} ${ags:0:3})"
-  export_to_csv ${ags} "$(build_query "gem" ${ags} ${ags})"
+  export_to_csv ${state_ars} "$(build_query "lan" ${state_ars} ${ars:0:2})"
+  export_to_csv ${ars:0:2} "$(build_query "rbz" ${ars:0:2} ${ars:0:3})"
+  export_to_csv ${ars:0:3} "$(build_query "krs" ${ars:0:3} ${ars:0:3})"
+  export_to_csv ${ars} "$(build_query "gem" ${ars} ${ars})"
 done
 
 cat << EOF

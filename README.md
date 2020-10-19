@@ -53,13 +53,15 @@ It should look like this:
 ### Export data
 
 The DEalog pilot project needs only a subset of the data which can be exported
-with the following command (the argument is the AGS):
+with the following command (the argument is the ARS):
 
 ```bash
 docker exec postgis_import ./export_csv_verwaltungsgebiete.sh 05911 05913 05914 05915 05916 05954 05958 05962 05966 05970 05974 05978
 ```
 
 This will export given municipalities incl. supervising ones to `data/` as CSV files.
+
+> The arguments are the rural districts (Landkreise).
 
 ## License
 
